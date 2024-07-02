@@ -1,0 +1,12 @@
+<employees><employee>
+      <id>763</id>
+      <name>jenni</name>
+      <age>22</age>
+      <department>tech</department>
+      <salary>15000</salary>
+      <hno>105</hno>
+      <street>yellareddy guda</street>
+      <city>hyd</city>
+      <state>telangana</state>
+      <zipcode>518008</zipcode>
+    </employee></employees>
