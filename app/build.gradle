@@ -24,6 +24,13 @@ dependencies {
     implementation 'org.scala-lang:scala-library:2.13.9'
     //this is JDBC dependency
     implementation 'com.microsoft.sqlserver:mssql-jdbc:9.4.1.jre8'
+    //this is for loggers - logback
+    implementation 'ch.qos.logback:logback-classic:1.2.6'
+    //this is for slf4j (framework for logger's)
+    implementation 'org.slf4j:slf4j-api:1.7.32'
+    //type-safe config
+    implementation 'com.typesafe:config:1.4.1'
+
 
     // This dependency is used by the application.
     implementation 'com.google.guava:guava:31.1-jre'
