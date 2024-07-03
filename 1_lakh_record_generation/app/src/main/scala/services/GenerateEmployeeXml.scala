@@ -8,7 +8,6 @@ object GenerateEmployeeXml {
   def main(args: Array[String]): Unit = {
     val output_file = "employees.xml"
     val numRecords = 200000
-    //now i am giving my own any 10 smple data that will be shuffled
     val names = Array("jenni", "bobby", "john", "hepshi", "david", "luna", "cynthia", "jacob", "peter", "rickey")
     val departments = Array("HR", "IT", "FINANCE", "DEVELOPER", "TECHNICAL", "SALES")
     val cities = Array("New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas")

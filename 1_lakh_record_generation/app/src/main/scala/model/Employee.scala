@@ -5,4 +5,4 @@ case class Employee(id: Int,
                     age: Int,
                     department: String,
                     city: String,
-                    state:String)
+                    state: String)
