@@ -39,6 +39,9 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.scalatest:scalatest_2.13:3.2.13'
     testImplementation 'org.scalatestplus:junit-4-13_2.13:3.2.2.0'
+    //this dependency is for xml
+    implementation 'org.scala-lang.modules:scala-xml_2.13:2.1.0' // Add this line
+
 
     // Need scala-xml at test runtime
     testRuntimeOnly 'org.scala-lang.modules:scala-xml_2.13:1.2.0'

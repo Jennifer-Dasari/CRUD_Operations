@@ -1,4 +1,10 @@
 package model
 
-case class Employee(id: Int, name: String, age: Int, department: String, salary: Int,
-                    hno: Int, street: String, city: String, state: String, zipcode: Int)
+case class Employee(id: Int,
+                    name: String,
+                    age: Int,
+                    department: String,
+                    city: String,
+                    state: String,
+                    timestamp: String
+                   )

@@ -5,13 +5,15 @@ import model.Employee
 import java.sql.Connection
 
 trait DbQuery {
-  def createTable(connection: Connection): Unit
+  def createTable(connection: Connection): Int
 
-  def insertEmployeeData(connection: Connection, employee: Employee): Unit
+  def insertEmployeeData(connection: Connection, employee: Employee): String
 
-  def updateEmployeeData(connection: Connection, employee: Employee): Unit
+  def updateById(connection: Connection, id: Int, employee: Employee): String
 
-  def deleteEmployeeData(connection: Connection, id: Int): Unit
+  def deleteById(connection: Connection, id: Int): String
 
-  def viewEmployeeData(connection: Connection, id: Int): Unit
+  def getById(connection: Connection, id: Int): Option[Employee]
+
+  def getAll(connection: Connection): List[Employee]
 }
