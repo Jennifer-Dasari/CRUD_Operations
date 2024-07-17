@@ -52,7 +52,7 @@ class DbQueryImp extends DbQuery {
         "DUP"
       case e: Exception =>
         logger.error(s"SQL ERROR OCCURED: ${e.getMessage}")
-        e.printStackTrace()
+//        e.printStackTrace()
         "DUP"
     }
   }
@@ -77,7 +77,7 @@ class DbQueryImp extends DbQuery {
       else s"No employee found with ID $id"
     } catch {
       case e: Exception =>
-        e.printStackTrace()
+//        e.printStackTrace()
         "Error updating employee: " + e.getMessage
     }
   }
@@ -93,7 +93,7 @@ class DbQueryImp extends DbQuery {
       else s"No employee found with ID $id"
     } catch {
       case e: Exception =>
-        e.printStackTrace()
+//        e.printStackTrace()
         "Error deleting employee: " + e.getMessage
     }
   }
@@ -120,7 +120,7 @@ class DbQueryImp extends DbQuery {
       }
     } catch {
       case e: Exception =>
-        e.printStackTrace()
+//        e.printStackTrace()
         None
     }
   }
@@ -145,7 +145,7 @@ class DbQueryImp extends DbQuery {
       employees
     } catch {
       case e: Exception =>
-        e.printStackTrace()
+//        e.printStackTrace()
         List.empty
     }
   }

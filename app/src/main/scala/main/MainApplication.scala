@@ -21,6 +21,8 @@ object MainApplication extends App {
       ExtractDatabase.extractData(connection)
     case Failure(exception) =>
       logger.error(s"connection disrupted! ${exception.getMessage}")
-      exception.printStackTrace()
+      exception.getCause.printStackTrace()
+//      exception.printStackTrace()
   }
 }
+

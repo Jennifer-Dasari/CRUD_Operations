@@ -45,7 +45,7 @@ object ExtractDatabase {
     catch {
       case e: Exception =>
         logger.error(s"SQL ERROR OCCURED: ${e.getMessage}")
-        e.printStackTrace()
+//        e.printStackTrace()
     } finally {
       statements.close()
       DatabaseConnection.closeConnection(connection)

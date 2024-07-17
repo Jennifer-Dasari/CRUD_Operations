@@ -9,3 +9,11 @@
 
 rootProject.name = 'CRUD_OP'
 include('app')
+gradle.allprojects {
+
+    ext.PlasmaUrls= {
+        repositories {
+            mavenCentral()
+        }
+    }
+}
