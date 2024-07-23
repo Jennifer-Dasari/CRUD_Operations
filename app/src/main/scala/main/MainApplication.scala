@@ -16,13 +16,13 @@ object MainApplication extends App {
   connection match {
     case Success(connection) =>
       logger.info("connection has been successfully established!")
-      GenerateEmployeeXml.insertDataIntoDataBase(connection)
+      val generateEmployeeXml = new GenerateEmployeeXml
+      generateEmployeeXml.insertDataIntoDataBase(connection)
       new CrudOperations(connection).menu()
-      ExtractDatabase.extractData(connection)
+      val outputFilePath ="extracted_employees.xml"
+      ExtractDatabase.extractData(connection,outputFilePath)
     case Failure(exception) =>
       logger.error(s"connection disrupted! ${exception.getMessage}")
-      exception.getCause.printStackTrace()
-//      exception.printStackTrace()
   }
 }
 

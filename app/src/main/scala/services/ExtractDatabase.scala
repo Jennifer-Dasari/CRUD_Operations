@@ -10,12 +10,12 @@ import java.sql.Connection
 object ExtractDatabase {
   val logger: Logger = LoggerFactory.getLogger(getClass)
 
-  def extractData(connection: Connection): Unit = {
+  def extractData(connection: Connection,filePath:String): Unit = {
     val query = "SELECT * FROM Employees"
     val statements = connection.createStatement()
     val resultSet = statements.executeQuery(query)
-    val opFileName = "extracted_employees.xml"
-    val writer = new FileWriter(opFileName)
+    //    val opFileName = "extracted_employees.xml"
+    val writer = new FileWriter(filePath)
     writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
     writer.write("<employees>\n")
     try {
@@ -36,19 +36,21 @@ object ExtractDatabase {
         writer.write(s"<department>$employee.department</department>\n")
         writer.write(s"<city>$employee.city</city>\n")
         writer.write(s"<state>$employee.state</state>\n")
+        writer.write(s"<timestamp>${employee.timestamp}</timestamp>\n") // Added timestamp
         writer.write(s"</employee>\n")
       }
       writer.write("</employees>\n")
-      writer.close()
-      logger.info(s"Data extracted and has been saved in $opFileName !")
+      //      writer.close()
     }
     catch {
       case e: Exception =>
         logger.error(s"SQL ERROR OCCURED: ${e.getMessage}")
-//        e.printStackTrace()
     } finally {
+      writer.close()
       statements.close()
       DatabaseConnection.closeConnection(connection)
     }
+    logger.info(s"Data extracted and has been saved in $filePath!")
+
   }
 }

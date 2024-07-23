@@ -12,7 +12,7 @@ import java.util.Date
 import scala.util.Random
 import scala.xml.XML
 
-object GenerateEmployeeXml extends DbQueryImp {
+class GenerateEmployeeXml extends DbQueryImp {
   val logger = LoggerFactory.getLogger(getClass)
   val config = ConfigFactory.load().getConfig("filepath")
   val filepath = config.getString("path")
@@ -87,5 +87,4 @@ object GenerateEmployeeXml extends DbQueryImp {
     logger.info("data has been inserted !")
     result
   }
-
 }

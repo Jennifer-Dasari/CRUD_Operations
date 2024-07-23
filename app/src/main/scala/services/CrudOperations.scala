@@ -38,7 +38,6 @@ class CrudOperations(connection: Connection) extends DbQueryImp {
     } catch {
       case e: Exception =>
         logger.error(s"An error occurred during CRUD operations: ${e.getMessage}")
-//        e.printStackTrace()
     }
   }
 

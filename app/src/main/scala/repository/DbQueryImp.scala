@@ -49,15 +49,14 @@ class DbQueryImp extends DbQuery {
       "Employee data inserted successfully"
     } catch {
       case e: SQLException if e.getErrorCode == 2627 =>
-        "DUP"
+        "DUP, error"
       case e: Exception =>
         logger.error(s"SQL ERROR OCCURED: ${e.getMessage}")
-//        e.printStackTrace()
         "DUP"
     }
   }
 
-   def updateById(connection: Connection, id: Int, employee: Employee): String = {
+  def updateById(connection: Connection, id: Int, employee: Employee): String = {
     try {
       val updateData = connection.prepareStatement(
         "UPDATE Employees SET name = ?, age = ?, department = ?, city = ?, state = ?, timestamp = ? WHERE id = ?"
@@ -73,11 +72,11 @@ class DbQueryImp extends DbQuery {
       val rowsUpdated = updateData.executeUpdate()
       updateData.close()
 
-      if (rowsUpdated > 0) s"Employee $id updated successfully"
+//      if (rowsUpdated > 0) s"Employee $id updated successfully"
+      if(rowsUpdated>0) "Employee updated successfully"
       else s"No employee found with ID $id"
     } catch {
       case e: Exception =>
-//        e.printStackTrace()
         "Error updating employee: " + e.getMessage
     }
   }
@@ -89,11 +88,12 @@ class DbQueryImp extends DbQuery {
       val rowsDeleted = deleteData.executeUpdate()
       deleteData.close()
 
-      if (rowsDeleted > 0) s"Employee with ID $id deleted successfully"
+//      if (rowsDeleted > 0) s"Employee with ID $id deleted successfully"
+      if(rowsDeleted>0) "Employee deleted successfully"
       else s"No employee found with ID $id"
+
     } catch {
       case e: Exception =>
-//        e.printStackTrace()
         "Error deleting employee: " + e.getMessage
     }
   }
@@ -106,13 +106,13 @@ class DbQueryImp extends DbQuery {
       val resultSet = preparedStatement.executeQuery()
       if (resultSet.next()) {
         val employee = Employee(
-          resultSet.getInt("ID"),
+          resultSet.getInt("Id"),
           resultSet.getString("Name"),
           resultSet.getInt("Age"),
           resultSet.getString("Department"),
           resultSet.getString("City"),
           resultSet.getString("State"),
-          resultSet.getString("timestamp")
+          resultSet.getString("Timestamp")
         )
         Some(employee)
       } else {
@@ -120,7 +120,6 @@ class DbQueryImp extends DbQuery {
       }
     } catch {
       case e: Exception =>
-//        e.printStackTrace()
         None
     }
   }
@@ -132,20 +131,19 @@ class DbQueryImp extends DbQuery {
       val resultSet = statement.executeQuery(query)
       val employees = Iterator.continually(resultSet).takeWhile(_.next()).map { rs =>
         Employee(
-          rs.getInt("ID"),
+          rs.getInt("Id"),
           rs.getString("Name"),
           rs.getInt("Age"),
           rs.getString("Department"),
           rs.getString("City"),
           rs.getString("State"),
-          rs.getString("timestamp")
+          rs.getString("Timestamp")
         )
       }.toList
       statement.close()
       employees
     } catch {
       case e: Exception =>
-//        e.printStackTrace()
         List.empty
     }
   }
