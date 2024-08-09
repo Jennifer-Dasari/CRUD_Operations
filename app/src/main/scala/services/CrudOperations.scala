@@ -1,17 +1,29 @@
 package services
 
 import model.Employee
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 import repository.DbQueryImp
 
 import java.sql.Connection
-import scala.io.StdIn
+import scala.annotation.tailrec
 
-class CrudOperations(connection: Connection) extends DbQueryImp {
-  private val logger = LoggerFactory.getLogger(getClass)
+trait UserInput {
+  def readLine(prompt: String): String
+}
+
+class ConsoleUserInput extends UserInput {
+  override def readLine(prompt: String): String = {
+    println(prompt)
+    scala.io.StdIn.readLine()
+  }
+}
+
+class CrudOperations(connection: Connection, userInput: UserInput) extends DbQueryImp {
+  override val logger: Logger = LoggerFactory.getLogger(getClass)
 
   def menu(): Unit = {
     try {
+      @tailrec
       def loop(): Unit = {
         logger.info("Choose an operation:")
         logger.info("1. Insert employee")
@@ -22,12 +34,12 @@ class CrudOperations(connection: Connection) extends DbQueryImp {
         logger.info("6. Exit")
         logger.info("Enter your choice:")
 
-        StdIn.readLine().toInt match {
+        userInput.readLine("").toInt match {
           case 1 => insertEmployee()
           case 2 => updateById()
           case 3 => deleteById()
           case 4 => getById()
-          case 5 => getAll()
+          case 5 => getAll // Retrieve and log all employees
           case 6 => return
           case _ => logger.info("Invalid choice. Please try again.")
         }
@@ -42,20 +54,13 @@ class CrudOperations(connection: Connection) extends DbQueryImp {
   }
 
   def insertEmployee(): Unit = {
-    logger.info("Enter employee ID:")
-    val id = StdIn.readLine().toInt
-    logger.info("Enter employee name:")
-    val name = StdIn.readLine()
-    logger.info("Enter employee age:")
-    val age = StdIn.readLine().toInt
-    logger.info("Enter employee department:")
-    val department = StdIn.readLine()
-    logger.info("Enter employee city:")
-    val city = StdIn.readLine()
-    logger.info("Enter employee state:")
-    val state = StdIn.readLine()
-    logger.info("inserted time:")
-    val timestamp = StdIn.readLine()
+    val id = userInput.readLine("Enter employee ID:").toInt
+    val name = userInput.readLine("Enter employee name:")
+    val age = userInput.readLine("Enter employee age:").toInt
+    val department = userInput.readLine("Enter employee department:")
+    val city = userInput.readLine("Enter employee city:")
+    val state = userInput.readLine("Enter employee state:")
+    val timestamp = userInput.readLine("inserted time:")
 
     val employee = Employee(id, name, age, department, city, state, timestamp)
     val result = insertEmployeeData(connection, employee)
@@ -63,20 +68,13 @@ class CrudOperations(connection: Connection) extends DbQueryImp {
   }
 
   def updateById(): Unit = {
-    logger.info("Enter employee ID to update:")
-    val id = StdIn.readLine().toInt
-    logger.info("Enter new employee name:")
-    val name = StdIn.readLine()
-    logger.info("Enter new employee age:")
-    val age = StdIn.readLine().toInt
-    logger.info("Enter new employee department:")
-    val department = StdIn.readLine()
-    logger.info("Enter new employee city:")
-    val city = StdIn.readLine()
-    logger.info("Enter new employee state:")
-    val state = StdIn.readLine()
-    logger.info("updated time is:")
-    val timestamp = StdIn.readLine()
+    val id = userInput.readLine("Enter employee ID:").toInt
+    val name = userInput.readLine("Enter employee name:")
+    val age = userInput.readLine("Enter employee age:").toInt
+    val department = userInput.readLine("Enter employee department:")
+    val city = userInput.readLine("Enter employee city:")
+    val state = userInput.readLine("Enter employee state:")
+    val timestamp = userInput.readLine("inserted time:")
 
     val employee = Employee(id, name, age, department, city, state, timestamp)
     val result = updateById(connection, id, employee)
@@ -84,15 +82,15 @@ class CrudOperations(connection: Connection) extends DbQueryImp {
   }
 
   def deleteById(): Unit = {
-    logger.info("Enter employee ID to delete:")
-    val id = StdIn.readLine().toInt
+    val id = userInput.readLine("Enter employee ID to delete:").toInt
+
     val result = deleteById(connection, id)
     logger.info(result)
   }
 
   def getById(): Unit = {
-    logger.info("Enter employee ID to retrieve:")
-    val id = StdIn.readLine().toInt
+    val id = userInput.readLine("Enter employee ID to retrieve:").toInt
+
     val employee = getById(connection, id)
     employee match {
       case Some(emp) => logger.info(s"Employee details: $emp")
@@ -100,8 +98,9 @@ class CrudOperations(connection: Connection) extends DbQueryImp {
     }
   }
 
-  def getAll(): Unit = {
-    val employees = getAll(connection)
-    employees.foreach(emp => logger.info(s"Employee details: $emp"))
+   def getAll: List[Employee] = {
+    val employees = super.getAll(connection)
+    employees.foreach(employee => logger.info(s"Employee details: $employee"))
+    employees
   }
 }

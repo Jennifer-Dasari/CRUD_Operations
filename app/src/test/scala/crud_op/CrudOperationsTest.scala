@@ -2,82 +2,145 @@ package crud_op
 
 import model.Employee
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
-import repository.DbQuery
-import services.CrudOperations
+import org.scalatestplus.mockito.MockitoSugar
+import org.slf4j.Logger
+import repository.DbQueryImp
+import services.{ConsoleUserInput, CrudOperations, UserInput}
 
 import java.sql.Connection
 
 class CrudOperationsTest extends FlatSpec with Matchers with MockitoSugar {
-  val repo:DbQuery = mock[DbQuery]
-  val connection:Connection = mock[Connection]
-  val service:CrudOperations = new CrudOperations(connection){
-    override def insertEmployeeData(connection: Connection,employee: Employee):String = {
-      repo.insertEmployeeData(connection, employee)
+
+  // Create mocks
+  val mockLogger: Logger = mock[Logger]
+  val mockRepo: DbQueryImp = mock[DbQueryImp]
+  val mockConnection: Connection = mock[Connection]
+  val mockUserInput: UserInput = mock[ConsoleUserInput]
+
+  // Create a CrudOperations instance with the mocks
+  val crudOps = new CrudOperations(mockConnection, mockUserInput) {
+    override val logger: Logger = mockLogger
+
+    // Override methods to use mocks
+    override def insertEmployeeData(connection: Connection, employee: Employee): String = {
+      mockRepo.insertEmployeeData(connection, employee)
     }
-    override def createTable(connection:Connection):Int = {
-      repo.createTable(connection)
-    }
-    override def updateById(connection: Connection,id:Int,employee: Employee):String ={
-      repo.updateById(connection,id, employee)
+
+    override def updateById(connection: Connection, id: Int, employee: Employee): String = {
+      mockRepo.updateById(connection, id, employee)
     }
 
     override def deleteById(connection: Connection, id: Int): String = {
-      repo.deleteById(connection, id)
+      mockRepo.deleteById(connection, id)
     }
 
     override def getById(connection: Connection, id: Int): Option[Employee] = {
-      repo.getById(connection, id)
+      mockRepo.getById(connection, id)
     }
 
     override def getAll(connection: Connection): List[Employee] = {
-      repo.getAll(connection)
+      val employees = mockRepo.getAll(connection)
+      employees.foreach(employee => logger.info(s"Employee details: $employee"))
+      employees
     }
   }
 
-  "CrudOperations" should "create a new employee" in {
-    val exampleEmployee = Employee(1, "jenni", 30, "teches", "hyd", "TS", "23s")
-    when(repo.insertEmployeeData(connection,exampleEmployee)).thenReturn("Employee data inserted successfully")
-    val result = service.insertEmployeeData(connection,exampleEmployee)
-    result shouldEqual "Employee data inserted successfully"
-    verify(repo).insertEmployeeData(connection,exampleEmployee)
+  "CrudOperations" should "log menu options when menu() is called" in {
+    when(mockUserInput.readLine("")).thenReturn("6") // Simulate user choosing "Exit"
+
+    crudOps.menu() // Trigger the menu
+
+    verify(mockLogger).info("Choose an operation:")
+    verify(mockLogger).info("1. Insert employee")
+    verify(mockLogger).info("2. Update employee")
+    verify(mockLogger).info("3. Delete employee")
+    verify(mockLogger).info("4. Get employee by ID")
+    verify(mockLogger).info("5. Get all employees")
+    verify(mockLogger).info("6. Exit")
+    verify(mockLogger).info("Enter your choice:")
   }
-  it should "create a table" in {
-    when(repo.createTable(connection)).thenReturn(1)
-    val result = service.createTable(connection)
-    result shouldEqual 1
-    verify(repo).createTable(connection)
+
+  it should "insert an employee and log the result" in {
+    when(mockUserInput.readLine("Enter employee ID:")).thenReturn("1")
+    when(mockUserInput.readLine("Enter employee name:")).thenReturn("John Doe")
+    when(mockUserInput.readLine("Enter employee age:")).thenReturn("30")
+    when(mockUserInput.readLine("Enter employee department:")).thenReturn("IT")
+    when(mockUserInput.readLine("Enter employee city:")).thenReturn("New York")
+    when(mockUserInput.readLine("Enter employee state:")).thenReturn("NY")
+    when(mockUserInput.readLine("inserted time:")).thenReturn("2023-01-01T00:00:00")
+
+    val employee = Employee(1, "John Doe", 30, "IT", "New York", "NY", "2023-01-01T00:00:00")
+    when(mockRepo.insertEmployeeData(mockConnection, employee)).thenReturn("Employee data inserted successfully")
+
+    crudOps.insertEmployee() // Trigger insertion
+
+    verify(mockLogger).info("Employee data inserted successfully")
   }
-  it should "update an existing employee" in {
-    val id = 1
-    val updateEmployee =Employee(id,"john",18,"sales","kadapa","AP","21s")
-    when(repo.updateById(connection,id,updateEmployee)).thenReturn("Employee update is successfull")
-    val result = service.updateById(connection,id,updateEmployee)
-    result shouldEqual  "Employee update is successfull"
-    verify(repo).updateById(connection,id,updateEmployee)
+
+  it should "update an employee and log the result" in {
+    when(mockUserInput.readLine("Enter employee ID:")).thenReturn("1")
+    when(mockUserInput.readLine("Enter employee name:")).thenReturn("Jane Doe")
+    when(mockUserInput.readLine("Enter employee age:")).thenReturn("28")
+    when(mockUserInput.readLine("Enter employee department:")).thenReturn("HR")
+    when(mockUserInput.readLine("Enter employee city:")).thenReturn("San Francisco")
+    when(mockUserInput.readLine("Enter employee state:")).thenReturn("CA")
+    when(mockUserInput.readLine("inserted time:")).thenReturn("2023-01-02T00:00:00")
+
+    val employee = Employee(1, "Jane Doe", 28, "HR", "San Francisco", "CA", "2023-01-02T00:00:00")
+    when(mockRepo.updateById(mockConnection, 1, employee)).thenReturn("Employee update is successful")
+
+    crudOps.updateById() // Trigger update
+
+    verify(mockLogger).info("Employee update is successful")
   }
-  it should "delete an employee data" in{
-    val id = 1
-    when(repo.deleteById(connection, id)).thenReturn("Employee data successfully deleted")
-    val result = service.deleteById(connection, id)
-    result shouldEqual "Employee data successfully deleted"
-    verify(repo).deleteById(connection, id)
+
+  it should "delete an employee and log the result" in {
+    when(mockUserInput.readLine("Enter employee ID to delete:")).thenReturn("1")
+    when(mockRepo.deleteById(mockConnection, 1)).thenReturn("Employee data successfully deleted")
+
+    crudOps.deleteById() // Trigger deletion
+
+    verify(mockLogger).info("Employee data successfully deleted")
   }
-  it should "display employee data by id" in {
-    val id = 1
-    val exampleEmploy = Option(Employee(1,"mark",23,"mech","hyd","TS","21s"))
-    when(repo.getById(connection, id)).thenReturn(exampleEmploy)
-    val result = service.getById(connection, id)
-    result shouldEqual exampleEmploy
-    verify(repo).getById(connection, id)
+
+  it should "retrieve an employee by ID and log the result" in {
+    when(mockUserInput.readLine("Enter employee ID to retrieve:")).thenReturn("1")
+    val employee = Employee(1, "Mark Smith", 35, "Finance", "Chicago", "IL", "2023-01-03T00:00:00")
+    when(mockRepo.getById(mockConnection, 1)).thenReturn(Some(employee))
+
+    crudOps.getById() // Trigger retrieval
+
+    verify(mockLogger).info(s"Employee details: $employee")
   }
-  it should "display all the employee data" in {
-    val employees = List(Employee(1,"name",22,"department","city","state","timestamp"),
-      Employee(2,"name",21,"department","city","state","timestamp"))
-    when(repo.getAll(connection)).thenReturn(employees)
-    val result = service.getAll(connection)
-    result shouldEqual employees
-    verify(repo).getAll(connection)
+  it should "log all employee data when getAll() is called" in {
+    // Create mock data
+    val employees = List(
+      Employee(1, "John Doe", 30, "IT", "New York", "NY", "2023-01-01T00:00:00"),
+      Employee(2, "Jane Smith", 25, "Finance", "Los Angeles", "CA", "2023-01-02T00:00:00")
+    )
+
+    // Mock the getAll method to return the mock data
+    when(mockRepo.getAll(mockConnection)).thenReturn(employees)
+
+    // Call getAll
+    crudOps.getAll(mockConnection) // Ensure this method is called in the test
+
+    // Verify that each employee's details were logged
+    employees.foreach { emp =>
+      verify(mockLogger).info(s"Employee details: $emp")
+    }
   }
+
+  it should "handle exceptions and log error messages" in {
+    // Simulate an exception during CRUD operations
+    when(mockUserInput.readLine("")).thenThrow(new RuntimeException("Simulated exception"))
+
+    // Call menu to trigger the exception
+    crudOps.menu()
+
+    // Verify that error message is logged
+    verify(mockLogger).error("An error occurred during CRUD operations: Simulated exception")
+  }
+
 }

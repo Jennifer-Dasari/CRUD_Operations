@@ -1,14 +1,13 @@
 package repository
 
-import com.typesafe.config.ConfigFactory
-//import services.InsertData
-import org.slf4j.LoggerFactory
+import com.typesafe.config.{Config, ConfigFactory}
+import org.slf4j.{Logger, LoggerFactory}
 
 import java.sql.{Connection, DriverManager}
 
-object DatabaseConnection {
-  private val logger = LoggerFactory.getLogger(getClass)
-  private val config = ConfigFactory.load().getConfig("database")
+class DatabaseConnection {
+  val logger: Logger = LoggerFactory.getLogger(getClass)
+  val config: Config = ConfigFactory.load().getConfig("database")
   private val dbUrl: String = config.getString("jdbcUrl")
   private val username: String = config.getString("username")
   private val password: String = config.getString("password")
@@ -24,7 +23,7 @@ object DatabaseConnection {
     conn
   }
 
-  def closeConnection(connection: Connection) = {
+  def closeConnection(connection: Connection): Unit = {
     if (connection != null && !connection.isClosed) {
       logger.info("Database connection closed.")
       connection.close()

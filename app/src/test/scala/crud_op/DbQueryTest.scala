@@ -170,7 +170,5 @@ employees.toList
     val dbQuery = new TestDbQuery {}
     val result = dbQuery.getAll(mockConnection)
     result shouldBe List(Employee(1,"jenni",22,"developer","hyd","TS","23s"))
-
   }
-
 }

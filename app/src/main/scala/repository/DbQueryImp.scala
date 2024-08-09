@@ -1,10 +1,14 @@
 package repository
 
-import main.MainApplication.logger
+//import main.MainApplication.logger
+import org.slf4j.{Logger, LoggerFactory}
+//import main.MainApplication.logger
 import model.Employee
+
 import java.sql.{Connection, PreparedStatement, SQLException, Statement}
 
 class DbQueryImp extends DbQuery {
+  val logger: Logger = LoggerFactory.getLogger(getClass)
   def createTable(connection: Connection): Int = {
     try {
       val statement = connection.createStatement()

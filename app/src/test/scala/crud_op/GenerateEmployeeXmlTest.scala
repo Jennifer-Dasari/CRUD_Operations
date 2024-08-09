@@ -1,77 +1,112 @@
-//import com.typesafe.config.Config
-//import org.mockito.ArgumentMatchers.any
-//import org.mockito.Mockito.{doNothing, times, verify, when}
-//import org.scalatest.mockito.MockitoSugar
-//import org.scalatest.{FlatSpec, Matchers}
-//import org.slf4j.Logger
-//import repository.DbQueryImp
-//import services.GenerateEmployeeXml
-//
-//import java.io.{File, FileWriter}
-//import java.sql.{Connection, Statement}
-//import scala.xml.{Elem, XML}
-//
-//class GenerateEmployeeXmlTest extends FlatSpec with Matchers with MockitoSugar {
-//
-//  trait TestSetup {
-//    val mockLogger: Logger = mock[Logger]
-//    val mockConfig: Config = mock[Config]
-//    val mockConnection: Connection = mock[Connection]
-//    val mockStatement: Statement = mock[Statement]
-//    val mockFileWriter: FileWriter = mock[FileWriter]
-//    val mockDbQuery: DbQueryImp = mock[DbQueryImp]
-//
-//    // Mock the behavior of FileWriter
-//    when(mockFileWriter.write(any[String])).thenAnswer(_ => Unit)
-//    when(mockFileWriter.close()).thenAnswer(_ => Unit)
-//
-//    val generateEmployeeXml = new GenerateEmployeeXml {
-//      override val logger: Logger = mockLogger
-//      override val config: Config = mockConfig
-//    }
-//
-//    // Prepare a test file path
-//    val filepath = "testfile.xml"
-//    when(mockConfig.getString("path")).thenReturn(filepath)
-//  }
-//
-//  "GenerateEmployeeXml" should "generate new data if the file is empty" in new TestSetup {
-//    // Simulate empty file scenario
-//    when(new File(filepath).exists()).thenReturn(false)
-//
-//    val result = generateEmployeeXml.generating()
-//    verify(mockLogger, times(1)).info(s"Generated 200000 records with unique IDs in $filepath")
-//    result shouldBe "generated new report"
-//  }
-//
-//  it should "return 'file data already existed' if filepath is not empty" in new TestSetup {
-//    // Simulate existing file scenario
-//    when(new File(filepath).exists()).thenReturn(true)
-//
-//    val result = generateEmployeeXml.generating()
-//    verify(mockLogger, times(1)).info("file already generated")
-//    result shouldBe "file data already existed"
-//  }
-//
-//  it should "insert data into the database" in new TestSetup {
-//    val mockXml: Elem = <employees>
-//      <employee>
-//        <id>1</id>
-//        <name>jenni</name>
-//        <age>22</age>
-//        <department>developer</department>
-//        <city>hyd</city>
-//        <state>TS</state>
-//        <timestamp>23s</timestamp>
-//      </employee>
-//    </employees>
-//
-//    // Mock XML loading
-//    when(XML.loadFile(new File(filepath))).thenReturn(mockXml)
-//    doNothing().when(mockDbQuery).createTable(any[Connection])
-//
-//    val result = generateEmployeeXml.insertDataIntoDataBase(mockConnection)
-//    verify(mockLogger, times(1)).info("data has been inserted !")
-//    result should not be empty
-//  }
-//}
+package crud_op
+
+import com.typesafe.config.Config
+import org.mockito.ArgumentMatchers.{any, argThat, eq => eqArg}
+import org.mockito.Mockito.when
+import org.scalatest.MustMatchers.convertToAnyMustWrapper
+import org.scalatest.mockito.MockitoSugar
+import org.scalatest.{FlatSpec, Matchers}
+import org.slf4j.Logger
+import services.GenerateEmployeeXml
+
+import java.io.File
+
+class GenerateEmployeeXmlTest extends FlatSpec with Matchers with MockitoSugar {
+
+  private def mockConfig(filePath: String): Config = {
+    val mockConfig = mock[Config]
+    when(mockConfig.getString("path")).thenReturn(filePath)
+    mockConfig
+  }
+
+  private def mockLogger: Logger = mock[Logger]
+
+  "GenerateEmployeeXml" should "generate XML file if it does not exist" in {
+    val filePath = "test-employees.xml"
+    val config = mockConfig(filePath)
+    val logger = mockLogger
+    val genEmployeeXml = new GenerateEmployeeXml
+    val file = new File(genEmployeeXml.filepath)
+    if (file.exists()) file.delete()
+    val result = genEmployeeXml.generating()
+    result must be ("generated new report")
+    file.exists() must be(true)
+    file.delete()
+  }
+
+  it should "not generate XML file if it already exists" in {
+    val filePath = "test-employees.xml"
+    val config = mockConfig(filePath)
+    val logger = mockLogger
+
+    val genEmployeeXml = new GenerateEmployeeXml
+
+    val file = new File(genEmployeeXml.filepath)
+    if (!file.exists()) {
+      file.createNewFile() // Ensure the file exists before running the test
+    }
+    val result = genEmployeeXml.generating()
+
+    result must be("file data already existed")
+
+    file.delete()
+  }
+
+  it should "get a random element from a list of strings" in {
+    val config = mockConfig("test-employees.xml")
+    val logger = mockLogger
+    val genEmployeeXml = new GenerateEmployeeXml
+    val list = List("a", "b", "c")
+    val element = genEmployeeXml.getRandomElement(list)
+    list must contain (element)
+  }
+
+  it should "get a random element within a range of integers" in {
+    val config = mockConfig("test-employees.xml")
+    val logger = mockLogger
+    val genEmployeeXml = new GenerateEmployeeXml
+    val element = genEmployeeXml.getRandomElement(1, 10)
+    element must (be >= 1 and be <= 10)
+  }
+
+//      it should "insert data into database" in {
+//        val filePath = "test-employees.xml"
+//        val config = mockConfig(filePath)
+//        val logger = mockLogger
+//        val mockConnection = mock[Connection]
+//        val mockDbQueryImp = mock[DbQueryImp]
+//        val xmlContent =
+//          """<?xml version="1.0" encoding="UTF-8"?>
+//            |<employees>
+//            |  <employee>
+//            |    <id>1</id>
+//            |    <name>jenni</name>
+//            |    <age>30</age>
+//            |    <department>IT</department>
+//            |    <city>New York</city>
+//            |    <state>NY</state>
+//            |    <timestamp>2024-07-24T12:34:56</timestamp>
+//            |  </employee>
+//            |</employees>""".stripMargin
+//        val file = new File(filePath)
+//        val writer = new FileWriter(file)
+//        writer.write(xmlContent)
+//        writer.close()
+//        val genEmployeeXml = new GenerateEmployeeXml {
+//          override val config = mockConfig(filePath)
+//          override val logger = mockLogger
+//          override def insertDataIntoDataBase(connection: Connection): Seq[String] = {
+//            val result = super.insertDataIntoDataBase(connection)
+//            verify(mockDbQueryImp).insertEmployeeData(
+//              eqArg(connection),
+//              argThat((e: Employee) => e.id == 1 && e.name == "jenni" && e.age == 30 &&
+//                e.department == "IT" && e.city == "New York" && e.state == "NY" &&
+//                e.timestamp == "2024-07-24T12:34:56")
+//            )
+//            result
+//          }
+//        }
+//        genEmployeeXml.insertDataIntoDataBase(mockConnection)
+//        file.delete()
+//      }
+}

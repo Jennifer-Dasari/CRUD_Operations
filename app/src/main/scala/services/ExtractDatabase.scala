@@ -1,16 +1,17 @@
 package services
 
 import model.Employee
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.Logger
 import repository.DatabaseConnection
 
 import java.io.FileWriter
 import java.sql.Connection
 
-object ExtractDatabase {
-  val logger: Logger = LoggerFactory.getLogger(getClass)
+class ExtractDatabase(databaseConnection: DatabaseConnection,logger: Logger) {
+//  val logger: Logger = LoggerFactory.getLogger(getClass)
 
   def extractData(connection: Connection,filePath:String): Unit = {
+
     val query = "SELECT * FROM Employees"
     val statements = connection.createStatement()
     val resultSet = statements.executeQuery(query)
@@ -31,26 +32,25 @@ object ExtractDatabase {
 
         writer.write(s"<employee>\n")
         writer.write(s"<id>${employee.id}</id>\n")
-        writer.write(s"<name>$employee.name</name>\n")
-        writer.write(s"<age>$employee.age</age>\n")
-        writer.write(s"<department>$employee.department</department>\n")
-        writer.write(s"<city>$employee.city</city>\n")
-        writer.write(s"<state>$employee.state</state>\n")
+        writer.write(s"<name>${employee.name}</name>\n")
+        writer.write(s"<age>${employee.age}</age>\n")
+        writer.write(s"<department>${employee.department}</department>\n")
+        writer.write(s"<city>${employee.city}</city>\n")
+        writer.write(s"<state>${employee.state}</state>\n")
         writer.write(s"<timestamp>${employee.timestamp}</timestamp>\n") // Added timestamp
         writer.write(s"</employee>\n")
       }
       writer.write("</employees>\n")
       //      writer.close()
-    }
-    catch {
+    } catch {
       case e: Exception =>
-        logger.error(s"SQL ERROR OCCURED: ${e.getMessage}")
+        logger.error(s"GENERAL ERROR OCCURRED: ${e.getMessage}")
+        throw e
     } finally {
       writer.close()
       statements.close()
-      DatabaseConnection.closeConnection(connection)
+      databaseConnection.closeConnection(connection)
     }
     logger.info(s"Data extracted and has been saved in $filePath!")
-
   }
 }

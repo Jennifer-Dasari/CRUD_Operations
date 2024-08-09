@@ -1,8 +1,8 @@
 package services
 
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{Config, ConfigFactory}
 import model.Employee
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 import repository.DbQueryImp
 
 import java.io.{File, FileWriter}
@@ -13,12 +13,13 @@ import scala.util.Random
 import scala.xml.XML
 
 class GenerateEmployeeXml extends DbQueryImp {
-  val logger = LoggerFactory.getLogger(getClass)
-  val config = ConfigFactory.load().getConfig("filepath")
-  val filepath = config.getString("path")
+  override val logger: Logger = LoggerFactory.getLogger(getClass)
+  val config: Config = ConfigFactory.load().getConfig("filepath")
+  val filepath: String = config.getString("path")
 
   def generating(): String = {
-    if (filepath.isEmpty) {
+//    if (!file.exists() || file.length() == 0) {
+      if (!new File(filepath).exists()) {
       val numRecords = 200000
       val names = List("jenni", "bobby", "john", "hepshi", "david", "luna", "cynthia", "jacob", "peter", "rickey")
       val departments = List("HR", "IT", "FINANCE", "DEVELOPER", "TECHNICAL", "SALES")

@@ -4,6 +4,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
+import org.slf4j.Logger
+import repository.DatabaseConnection
 import services.ExtractDatabase
 
 import java.io.File
@@ -15,6 +17,8 @@ class ExtractDatabaseTest extends FlatSpec with Matchers with MockitoSugar {
     val mockConnection: Connection = mock[Connection]
     val mockStatement: Statement = mock[Statement]
     val mockResult: ResultSet = mock[ResultSet]
+    val databaseConnection = mock[DatabaseConnection]
+    val logger: Logger = mock[Logger]
 
     when(mockResult.next()).thenReturn(true, true,false)
     when(mockResult.getInt("Id")).thenReturn(1, 2)
@@ -31,7 +35,7 @@ class ExtractDatabaseTest extends FlatSpec with Matchers with MockitoSugar {
     if (outputFile.exists()) outputFile.delete()
 
     println("Starting extraction...")
-    ExtractDatabase.extractData(mockConnection,outputFile.getAbsolutePath)
+    new ExtractDatabase(databaseConnection,logger).extractData(mockConnection,outputFile.getAbsolutePath)
     println(s"File exists: ${outputFile.exists()}")
 
     if (outputFile.exists()) {
@@ -46,32 +50,31 @@ class ExtractDatabaseTest extends FlatSpec with Matchers with MockitoSugar {
           |<employees>
           |<employee>
           |<id>1</id>
-          |<name>Employee(1,joe,22,tech,hyd,TS,23s).name</name>
-          |<age>Employee(1,joe,22,tech,hyd,TS,23s).age</age>
-          |<department>Employee(1,joe,22,tech,hyd,TS,23s).department</department>
-          |<city>Employee(1,joe,22,tech,hyd,TS,23s).city</city>
-          |<state>Employee(1,joe,22,tech,hyd,TS,23s).state</state>
+          |<name>joe</name>
+          |<age>22</age>
+          |<department>tech</department>
+          |<city>hyd</city>
+          |<state>TS</state>
           |<timestamp>23s</timestamp>
           |</employee>
           |<employee>
           |<id>2</id>
-          |<name>Employee(2,max,18,sales,knl,AP,24s).name</name>
-          |<age>Employee(2,max,18,sales,knl,AP,24s).age</age>
-          |<department>Employee(2,max,18,sales,knl,AP,24s).department</department>
-          |<city>Employee(2,max,18,sales,knl,AP,24s).city</city>
-          |<state>Employee(2,max,18,sales,knl,AP,24s).state</state>
+          |<name>max</name>
+          |<age>18</age>
+          |<department>sales</department>
+          |<city>knl</city>
+          |<state>AP</state>
           |<timestamp>24s</timestamp>
           |</employee>
           |</employees>""".stripMargin
 
       val expectedXmlContent = XML.loadString(expectedXml)
       val fileXmlContent = XML.loadFile(outputFile)
-
       fileXmlContent shouldEqual expectedXmlContent
     }else{
       fail("the output file was not created.")
     }
     outputFile.delete()
   }
-}
 
+}

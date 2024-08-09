@@ -75,7 +75,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/56)
+    (0/55)
   </span>
 </td>
 </tr>
@@ -107,7 +107,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;  val filepath = config.getString(&quot;path&quot;)</b>
 &nbsp;
 &nbsp;  def generating(): String = {
-<b class="nc">&nbsp;    if (filepath.isEmpty) {</b>
+<b class="nc">&nbsp;    if (!new File(filepath).exists()) {</b>
 <b class="nc">&nbsp;      val numRecords = 200000</b>
 <b class="nc">&nbsp;      val names = List(&quot;jenni&quot;, &quot;bobby&quot;, &quot;john&quot;, &quot;hepshi&quot;, &quot;david&quot;, &quot;luna&quot;, &quot;cynthia&quot;, &quot;jacob&quot;, &quot;peter&quot;, &quot;rickey&quot;)</b>
 <b class="nc">&nbsp;      val departments = List(&quot;HR&quot;, &quot;IT&quot;, &quot;FINANCE&quot;, &quot;DEVELOPER&quot;, &quot;TECHNICAL&quot;, &quot;SALES&quot;)</b>
@@ -158,7 +158,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;  def insertDataIntoDataBase(connection: Connection): Seq[String] = {
 <b class="nc">&nbsp;    generating()</b>
-<b class="nc">&nbsp;    createTable(connection)</b>
+&nbsp;//    createTable(connection)
 <b class="nc">&nbsp;    val dbQuery = new DbQueryImp</b>
 <b class="nc">&nbsp;    val xml = XML.loadFile(new File(filepath))</b>
 <b class="nc">&nbsp;    val result = (xml \\ &quot;employee&quot;).map { employeeNode =&gt;</b>
@@ -200,7 +200,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-07-23 15:57</div>
+    <div style="float:right;">generated on 2024-07-26 09:47</div>
 </div>
 </body>
 </html>
