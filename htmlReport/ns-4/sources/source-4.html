@@ -1,0 +1,207 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > GenerateEmployeeXml</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">services</a>
+</div>
+
+<h1>Coverage Summary for Class: GenerateEmployeeXml (services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GenerateEmployeeXml</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/56)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package services
+&nbsp;
+&nbsp;import com.typesafe.config.{Config, ConfigFactory}
+&nbsp;import model.Employee
+&nbsp;import org.slf4j.{Logger, LoggerFactory}
+&nbsp;import repository.DbQueryImp
+&nbsp;
+&nbsp;import java.io.{File, FileWriter}
+&nbsp;import java.sql.Connection
+&nbsp;import java.text.SimpleDateFormat
+&nbsp;import java.util.Date
+&nbsp;import scala.util.Random
+&nbsp;import scala.xml.XML
+&nbsp;
+<b class="nc">&nbsp;class GenerateEmployeeXml extends DbQueryImp {</b>
+<b class="nc">&nbsp;  override val logger: Logger = LoggerFactory.getLogger(getClass)</b>
+<b class="nc">&nbsp;  val config: Config = ConfigFactory.load().getConfig(&quot;filepath&quot;)</b>
+<b class="nc">&nbsp;  val filepath: String = config.getString(&quot;path&quot;)</b>
+&nbsp;
+&nbsp;  def generating(): String = {
+&nbsp;//    if (!file.exists() || file.length() == 0) {
+<b class="nc">&nbsp;      if (!new File(filepath).exists()) {</b>
+<b class="nc">&nbsp;      val numRecords = 200000</b>
+<b class="nc">&nbsp;      val names = List(&quot;jenni&quot;, &quot;bobby&quot;, &quot;john&quot;, &quot;hepshi&quot;, &quot;david&quot;, &quot;luna&quot;, &quot;cynthia&quot;, &quot;jacob&quot;, &quot;peter&quot;, &quot;rickey&quot;)</b>
+<b class="nc">&nbsp;      val departments = List(&quot;HR&quot;, &quot;IT&quot;, &quot;FINANCE&quot;, &quot;DEVELOPER&quot;, &quot;TECHNICAL&quot;, &quot;SALES&quot;)</b>
+<b class="nc">&nbsp;      val cities = List(&quot;New York&quot;, &quot;Los Angeles&quot;, &quot;Chicago&quot;, &quot;Houston&quot;, &quot;Phoenix&quot;, &quot;Philadelphia&quot;, &quot;San Antonio&quot;, &quot;San Diego&quot;, &quot;Dallas&quot;)</b>
+<b class="nc">&nbsp;      val states = List(&quot;NY&quot;, &quot;CA&quot;, &quot;IL&quot;, &quot;TX&quot;, &quot;AZ&quot;, &quot;PA&quot;)</b>
+<b class="nc">&nbsp;      val dateFormat = new SimpleDateFormat(&quot;yyyy-MM-dd&#39;T&#39;HH:mm:ss&quot;)</b>
+<b class="nc">&nbsp;      val writer = new FileWriter(filepath)</b>
+<b class="nc">&nbsp;      writer.write(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;\n&quot;)</b>
+<b class="nc">&nbsp;      writer.write(&quot;&lt;employees&gt;\n&quot;)</b>
+&nbsp;
+<b class="nc">&nbsp;      for (i &lt;- 1 to numRecords) {</b>
+<b class="nc">&nbsp;        val id = i</b>
+<b class="nc">&nbsp;        val name = getRandomElement(names)</b>
+<b class="nc">&nbsp;        val age = getRandomElement(21, 60)</b>
+<b class="nc">&nbsp;        val department = getRandomElement(departments)</b>
+<b class="nc">&nbsp;        val city = getRandomElement(cities)</b>
+<b class="nc">&nbsp;        val state = getRandomElement(states)</b>
+<b class="nc">&nbsp;        val timestamp = dateFormat.format(new Date())</b>
+&nbsp;
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;employee&gt;\n&quot;)</b>
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;id&gt;${id}&lt;/id&gt;\n&quot;)</b>
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;name&gt;${name}&lt;/name&gt;\n&quot;)</b>
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;age&gt;${age}&lt;/age&gt;\n&quot;)</b>
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;department&gt;${department}&lt;/department&gt;\n&quot;)</b>
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;city&gt;${city}&lt;/city&gt;\n&quot;)</b>
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;state&gt;${state}&lt;/state&gt;\n&quot;)</b>
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;timestamp&gt;$timestamp &lt;/timestamp&gt;\n&quot;)</b>
+<b class="nc">&nbsp;        writer.write(s&quot;&lt;/employee&gt;\n&quot;)</b>
+&nbsp;      }
+<b class="nc">&nbsp;      writer.write(&quot;&lt;/employees&gt;\n&quot;)</b>
+<b class="nc">&nbsp;      writer.close()</b>
+<b class="nc">&nbsp;      logger.info(s&quot;Generated $numRecords records with unique IDs in $filepath&quot;)</b>
+<b class="nc">&nbsp;      &quot;generated new report&quot;</b>
+&nbsp;    } else {
+<b class="nc">&nbsp;      logger.info(&quot;file already generated&quot;)</b>
+<b class="nc">&nbsp;      &quot;file data already existed&quot;</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  def getRandomElement(List: List[String]): String = {
+<b class="nc">&nbsp;    val randomIndex = Random.nextInt(List.length)</b>
+<b class="nc">&nbsp;    List(randomIndex)</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  def getRandomElement(min: Int, max: Int): Int = {
+<b class="nc">&nbsp;    Random.nextInt(max - min + 1) + min</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  def insertDataIntoDataBase(connection: Connection): Seq[String] = {
+<b class="nc">&nbsp;    generating()</b>
+<b class="nc">&nbsp;    createTable(connection)</b>
+<b class="nc">&nbsp;    val dbQuery = new DbQueryImp</b>
+<b class="nc">&nbsp;    val xml = XML.loadFile(new File(filepath))</b>
+<b class="nc">&nbsp;    val result = (xml \\ &quot;employee&quot;).map { employeeNode =&gt;</b>
+<b class="nc">&nbsp;      val id = (employeeNode \ &quot;id&quot;).text.toInt</b>
+<b class="nc">&nbsp;      val name = (employeeNode \ &quot;name&quot;).text</b>
+<b class="nc">&nbsp;      val age = (employeeNode \ &quot;age&quot;).text.toInt</b>
+<b class="nc">&nbsp;      val department = (employeeNode \ &quot;department&quot;).text</b>
+<b class="nc">&nbsp;      val city = (employeeNode \ &quot;city&quot;).text</b>
+<b class="nc">&nbsp;      val state = (employeeNode \ &quot;state&quot;).text</b>
+<b class="nc">&nbsp;      val timestamp = (employeeNode \ &quot;timestamp&quot;).text</b>
+<b class="nc">&nbsp;      val employee = Employee(id, name, age, department, city, state, timestamp)</b>
+&nbsp;
+<b class="nc">&nbsp;      dbQuery.insertEmployeeData(connection, employee)</b>
+&nbsp;    }
+<b class="nc">&nbsp;    logger.info(&quot;data has been inserted !&quot;)</b>
+<b class="nc">&nbsp;    result</b>
+&nbsp;  }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-13 11:06</div>
+</div>
+</body>
+</html>

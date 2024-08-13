@@ -25,9 +25,12 @@ Current scope:     <a href="../../index.html">all classes</a>
 <h1>Coverage Summary for Class: DatabaseConnection (repository)</h1>
 
 <table class="coverageStats">
-
 <tr>
   <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -41,35 +44,16 @@ Current scope:     <a href="../../index.html">all classes</a>
   Line, %
 </th>
 </tr>
-  <tr>
-    <td class="name">DatabaseConnection$</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/9)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/4)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/14)
-  </span>
-</td>
-  </tr>
 <tr>
-  <td class="name"><strong>Total</strong></td>
+  <td class="name">DatabaseConnection</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
 <td class="coverageStat">
   <span class="percent">
     0%
@@ -95,6 +79,7 @@ Current scope:     <a href="../../index.html">all classes</a>
   </span>
 </td>
 </tr>
+
 </table>
 
 <br/>
@@ -104,15 +89,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;package repository
 &nbsp;
-&nbsp;import com.typesafe.config.ConfigFactory
-&nbsp;//import services.InsertData
-&nbsp;import org.slf4j.LoggerFactory
+&nbsp;import com.typesafe.config.{Config, ConfigFactory}
+&nbsp;import org.slf4j.{Logger, LoggerFactory}
 &nbsp;
 &nbsp;import java.sql.{Connection, DriverManager}
 &nbsp;
-&nbsp;object DatabaseConnection {
-<b class="nc">&nbsp;  private val logger = LoggerFactory.getLogger(getClass)</b>
-<b class="nc">&nbsp;  private val config = ConfigFactory.load().getConfig(&quot;database&quot;)</b>
+&nbsp;class DatabaseConnection {
+<b class="nc">&nbsp;  val logger: Logger = LoggerFactory.getLogger(getClass)</b>
+<b class="nc">&nbsp;  val config: Config = ConfigFactory.load().getConfig(&quot;database&quot;)</b>
 <b class="nc">&nbsp;  private val dbUrl: String = config.getString(&quot;jdbcUrl&quot;)</b>
 <b class="nc">&nbsp;  private val username: String = config.getString(&quot;username&quot;)</b>
 <b class="nc">&nbsp;  private val password: String = config.getString(&quot;password&quot;)</b>
@@ -128,7 +112,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;    conn</b>
 &nbsp;  }
 &nbsp;
-&nbsp;  def closeConnection(connection: Connection) = {
+&nbsp;  def closeConnection(connection: Connection): Unit = {
 <b class="nc">&nbsp;    if (connection != null &amp;&amp; !connection.isClosed) {</b>
 <b class="nc">&nbsp;      logger.info(&quot;Database connection closed.&quot;)</b>
 <b class="nc">&nbsp;      connection.close()</b>
@@ -158,7 +142,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-07-26 09:47</div>
+    <div style="float:right;">generated on 2024-08-13 11:06</div>
 </div>
 </body>
 </html>

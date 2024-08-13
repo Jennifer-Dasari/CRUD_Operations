@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
+  <title>Coverage Report > UserInput</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">services</a>
+</div>
+
+<h1>Coverage Summary for Class: UserInput (services)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">UserInput</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package services
+&nbsp;
+&nbsp;import model.Employee
+&nbsp;import org.slf4j.{Logger, LoggerFactory}
+&nbsp;import repository.DbQueryImp
+&nbsp;
+&nbsp;import java.sql.Connection
+&nbsp;import scala.annotation.tailrec
+&nbsp;
+&nbsp;trait UserInput {
+&nbsp;  def readLine(prompt: String): String
+&nbsp;}
+&nbsp;
+&nbsp;class ConsoleUserInput extends UserInput {
+&nbsp;  override def readLine(prompt: String): String = {
+&nbsp;    println(prompt)
+&nbsp;    scala.io.StdIn.readLine()
+&nbsp;  }
+&nbsp;}
+&nbsp;
+&nbsp;class CrudOperations(connection: Connection, userInput: UserInput) extends DbQueryImp {
+&nbsp;  override val logger: Logger = LoggerFactory.getLogger(getClass)
+&nbsp;
+&nbsp;  def menu(): Unit = {
+&nbsp;    try {
+&nbsp;      @tailrec
+&nbsp;      def loop(): Unit = {
+&nbsp;        logger.info(&quot;Choose an operation:&quot;)
+&nbsp;        logger.info(&quot;1. Insert employee&quot;)
+&nbsp;        logger.info(&quot;2. Update employee&quot;)
+&nbsp;        logger.info(&quot;3. Delete employee&quot;)
+&nbsp;        logger.info(&quot;4. Get employee by ID&quot;)
+&nbsp;        logger.info(&quot;5. Get all employees&quot;)
+&nbsp;        logger.info(&quot;6. Exit&quot;)
+&nbsp;        logger.info(&quot;Enter your choice:&quot;)
+&nbsp;
+&nbsp;        userInput.readLine(&quot;&quot;).toInt match {
+&nbsp;          case 1 =&gt; insertEmployee()
+&nbsp;          case 2 =&gt; updateById()
+&nbsp;          case 3 =&gt; deleteById()
+&nbsp;          case 4 =&gt; getById()
+&nbsp;          case 5 =&gt;  {
+&nbsp;            val employees = getAll
+&nbsp;            employees
+&nbsp;          }
+&nbsp;          case 6 =&gt; return
+&nbsp;          case _ =&gt; logger.info(&quot;Invalid choice. Please try again.&quot;)
+&nbsp;        }
+&nbsp;        loop()
+&nbsp;      }
+&nbsp;
+&nbsp;      loop()
+&nbsp;    } catch {
+&nbsp;      case e: Exception =&gt;
+&nbsp;        logger.error(s&quot;An error occurred during CRUD operations: ${e.getMessage}&quot;)
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  def insertEmployee(): Unit = {
+&nbsp;    val id = userInput.readLine(&quot;Enter employee ID:&quot;).toInt
+&nbsp;    val name = userInput.readLine(&quot;Enter employee name:&quot;)
+&nbsp;    val age = userInput.readLine(&quot;Enter employee age:&quot;).toInt
+&nbsp;    val department = userInput.readLine(&quot;Enter employee department:&quot;)
+&nbsp;    val city = userInput.readLine(&quot;Enter employee city:&quot;)
+&nbsp;    val state = userInput.readLine(&quot;Enter employee state:&quot;)
+&nbsp;    val timestamp = userInput.readLine(&quot;inserted time:&quot;)
+&nbsp;
+&nbsp;    val employee = Employee(id, name, age, department, city, state, timestamp)
+&nbsp;    val result = insertEmployeeData(connection, employee)
+&nbsp;    logger.info(result)
+&nbsp;  }
+&nbsp;
+&nbsp;  def updateById(): Unit = {
+&nbsp;    val id = userInput.readLine(&quot;Enter employee ID:&quot;).toInt
+&nbsp;    val name = userInput.readLine(&quot;Enter employee name:&quot;)
+&nbsp;    val age = userInput.readLine(&quot;Enter employee age:&quot;).toInt
+&nbsp;    val department = userInput.readLine(&quot;Enter employee department:&quot;)
+&nbsp;    val city = userInput.readLine(&quot;Enter employee city:&quot;)
+&nbsp;    val state = userInput.readLine(&quot;Enter employee state:&quot;)
+&nbsp;    val timestamp = userInput.readLine(&quot;inserted time:&quot;)
+&nbsp;
+&nbsp;    val employee = Employee(id, name, age, department, city, state, timestamp)
+&nbsp;    val result = updateById(connection, id, employee)
+&nbsp;    logger.info(result)
+&nbsp;  }
+&nbsp;
+&nbsp;  def deleteById(): Unit = {
+&nbsp;    val id = userInput.readLine(&quot;Enter employee ID to delete:&quot;).toInt
+&nbsp;
+&nbsp;    val result = deleteById(connection, id)
+&nbsp;    logger.info(result)
+&nbsp;  }
+&nbsp;
+&nbsp;  def getById(): Unit = {
+&nbsp;    val id = userInput.readLine(&quot;Enter employee ID to retrieve:&quot;).toInt
+&nbsp;    val employee = getById(connection, id)
+&nbsp;    employee match {
+&nbsp;      case Some(emp) =&gt; logger.info(s&quot;Employee details: $emp&quot;)
+&nbsp;      case None =&gt; logger.info(s&quot;No employee found with ID $id&quot;)
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;   def getAll(): List[Employee] = {
+&nbsp;    val employees = super.getAll(connection)
+&nbsp;    employees.foreach(employee =&gt; logger.info(s&quot;Employee details: $employee&quot;))
+&nbsp;    employees
+&nbsp;  }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-08-13 11:06</div>
+</div>
+</body>
+</html>

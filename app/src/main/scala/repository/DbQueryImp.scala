@@ -29,7 +29,7 @@ class DbQueryImp extends DbQuery {
       }
       statement.executeUpdate(createSqlTable)
     } catch {
-      case e: Exception => logger.error("Error creating table: " + e.getMessage)
+      case e: SQLException => logger.error("Error creating table: " + e.getMessage)
         0
     }
   }
@@ -144,10 +144,12 @@ class DbQueryImp extends DbQuery {
           rs.getString("Timestamp")
         )
       }.toList
+      resultSet.close()
       statement.close()
       employees
     } catch {
-      case e: Exception =>
+      case e: SQLException =>
+        logger.error(s"SQL Error: ${e.getMessage}")
         List.empty
     }
   }

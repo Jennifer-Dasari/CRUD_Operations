@@ -9,7 +9,6 @@ import java.sql.Connection
 
 class ExtractDatabase(databaseConnection: DatabaseConnection,logger: Logger) {
 //  val logger: Logger = LoggerFactory.getLogger(getClass)
-
   def extractData(connection: Connection,filePath:String): Unit = {
 
     val query = "SELECT * FROM Employees"

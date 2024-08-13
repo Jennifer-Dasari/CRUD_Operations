@@ -39,7 +39,10 @@ class CrudOperations(connection: Connection, userInput: UserInput) extends DbQue
           case 2 => updateById()
           case 3 => deleteById()
           case 4 => getById()
-          case 5 => getAll // Retrieve and log all employees
+          case 5 =>  {
+            val employees = getAll()
+            employees
+          }
           case 6 => return
           case _ => logger.info("Invalid choice. Please try again.")
         }
@@ -90,7 +93,6 @@ class CrudOperations(connection: Connection, userInput: UserInput) extends DbQue
 
   def getById(): Unit = {
     val id = userInput.readLine("Enter employee ID to retrieve:").toInt
-
     val employee = getById(connection, id)
     employee match {
       case Some(emp) => logger.info(s"Employee details: $emp")
@@ -98,7 +100,7 @@ class CrudOperations(connection: Connection, userInput: UserInput) extends DbQue
     }
   }
 
-   def getAll: List[Employee] = {
+   def getAll(): List[Employee] = {
     val employees = super.getAll(connection)
     employees.foreach(employee => logger.info(s"Employee details: $employee"))
     employees

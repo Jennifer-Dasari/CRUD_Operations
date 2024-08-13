@@ -1,7 +1,7 @@
 package crud_op
 
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{FlatSpec, Matchers}
 import org.slf4j.Logger
@@ -77,4 +77,22 @@ class ExtractDatabaseTest extends FlatSpec with Matchers with MockitoSugar {
     outputFile.delete()
   }
 
+  it should "log an error message when an exception occurs" in {
+    val mockConnection = mock[Connection]
+    val mockDatabaseConnection = mock[DatabaseConnection]
+    val mockLogger = mock[Logger]
+
+    val mockResultSet = mock[ResultSet]
+    val mockStatement = mock[Statement]
+
+    when(mockConnection.createStatement()).thenReturn(mockStatement)
+    when(mockStatement.executeQuery("SELECT * FROM Employees")).thenReturn(mockResultSet)
+    when(mockResultSet.next()).thenThrow(new RuntimeException("Simulated exception"))
+
+    val extractDatabase = new ExtractDatabase(mockDatabaseConnection, mockLogger)
+    intercept[RuntimeException] {
+      extractDatabase.extractData(mockConnection, "dummy_file_path.xml")
+    }
+    verify(mockLogger).error("GENERAL ERROR OCCURRED: Simulated exception")
+  }
 }

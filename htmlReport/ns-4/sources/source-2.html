@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=windows-1252"> 
-  <title>Coverage Report > ExtractDatabase</title>
+  <title>Coverage Report > CrudOperations</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,12 +22,15 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">services</a>
 </div>
 
-<h1>Coverage Summary for Class: ExtractDatabase (services)</h1>
+<h1>Coverage Summary for Class: CrudOperations (services)</h1>
 
 <table class="coverageStats">
-
 <tr>
   <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
 <th class="coverageStat 
 ">
   Method, %
@@ -41,41 +44,14 @@ Current scope:     <a href="../../index.html">all classes</a>
   Line, %
 </th>
 </tr>
-  <tr>
-    <td class="name">ExtractDatabase$</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/3)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/2)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/32)
-  </span>
-</td>
-  </tr>
 <tr>
-  <td class="name"><strong>Total</strong></td>
+  <td class="name">CrudOperations</td>
 <td class="coverageStat">
   <span class="percent">
     0%
   </span>
   <span class="absValue">
-    (0/3)
+    (0/1)
   </span>
 </td>
 <td class="coverageStat">
@@ -83,7 +59,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/2)
+    (0/9)
   </span>
 </td>
 <td class="coverageStat">
@@ -91,10 +67,19 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/32)
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/51)
   </span>
 </td>
 </tr>
+
 </table>
 
 <br/>
@@ -106,58 +91,110 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;import model.Employee
 &nbsp;import org.slf4j.{Logger, LoggerFactory}
-&nbsp;import repository.DatabaseConnection
+&nbsp;import repository.DbQueryImp
 &nbsp;
-&nbsp;import java.io.FileWriter
 &nbsp;import java.sql.Connection
+&nbsp;import scala.annotation.tailrec
 &nbsp;
-&nbsp;object ExtractDatabase {
-<b class="nc">&nbsp;  val logger: Logger = LoggerFactory.getLogger(getClass)</b>
+&nbsp;trait UserInput {
+&nbsp;  def readLine(prompt: String): String
+&nbsp;}
 &nbsp;
-&nbsp;  def extractData(connection: Connection,filePath:String): Unit = {
-<b class="nc">&nbsp;    val query = &quot;SELECT * FROM Employees&quot;</b>
-<b class="nc">&nbsp;    val statements = connection.createStatement()</b>
-<b class="nc">&nbsp;    val resultSet = statements.executeQuery(query)</b>
-&nbsp;    //    val opFileName = &quot;extracted_employees.xml&quot;
-<b class="nc">&nbsp;    val writer = new FileWriter(filePath)</b>
-<b class="nc">&nbsp;    writer.write(&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;\n&quot;)</b>
-<b class="nc">&nbsp;    writer.write(&quot;&lt;employees&gt;\n&quot;)</b>
-&nbsp;    try {
-<b class="nc">&nbsp;      while (resultSet.next()) {</b>
-<b class="nc">&nbsp;        val id = resultSet.getInt(&quot;Id&quot;)</b>
-<b class="nc">&nbsp;        val name = resultSet.getString(&quot;Name&quot;)</b>
-<b class="nc">&nbsp;        val age = resultSet.getInt(&quot;Age&quot;)</b>
-<b class="nc">&nbsp;        val department = resultSet.getString(&quot;Department&quot;)</b>
-<b class="nc">&nbsp;        val city = resultSet.getString(&quot;City&quot;)</b>
-<b class="nc">&nbsp;        val state = resultSet.getString(&quot;State&quot;)</b>
-<b class="nc">&nbsp;        val timestamp = resultSet.getString(&quot;Timestamp&quot;)</b>
-<b class="nc">&nbsp;        val employee = Employee(id, name, age, department, city, state, timestamp)</b>
-&nbsp;
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;employee&gt;\n&quot;)</b>
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;id&gt;${employee.id}&lt;/id&gt;\n&quot;)</b>
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;name&gt;$employee.name&lt;/name&gt;\n&quot;)</b>
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;age&gt;$employee.age&lt;/age&gt;\n&quot;)</b>
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;department&gt;$employee.department&lt;/department&gt;\n&quot;)</b>
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;city&gt;$employee.city&lt;/city&gt;\n&quot;)</b>
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;state&gt;$employee.state&lt;/state&gt;\n&quot;)</b>
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;timestamp&gt;${employee.timestamp}&lt;/timestamp&gt;\n&quot;) // Added timestamp</b>
-<b class="nc">&nbsp;        writer.write(s&quot;&lt;/employee&gt;\n&quot;)</b>
-&nbsp;      }
-<b class="nc">&nbsp;      writer.write(&quot;&lt;/employees&gt;\n&quot;)</b>
-&nbsp;      //      writer.close()
-&nbsp;    }
-&nbsp;    catch {
-&nbsp;      case e: Exception =&gt;
-<b class="nc">&nbsp;        logger.error(s&quot;SQL ERROR OCCURED: ${e.getMessage}&quot;)</b>
-&nbsp;    } finally {
-<b class="nc">&nbsp;      writer.close()</b>
-<b class="nc">&nbsp;      statements.close()</b>
-<b class="nc">&nbsp;      DatabaseConnection.closeConnection(connection)</b>
-&nbsp;    }
-<b class="nc">&nbsp;    logger.info(s&quot;Data extracted and has been saved in $filePath!&quot;)</b>
-&nbsp;
+&nbsp;class ConsoleUserInput extends UserInput {
+&nbsp;  override def readLine(prompt: String): String = {
+&nbsp;    println(prompt)
+&nbsp;    scala.io.StdIn.readLine()
 &nbsp;  }
-<b class="nc">&nbsp;}</b>
+&nbsp;}
+&nbsp;
+<b class="nc">&nbsp;class CrudOperations(connection: Connection, userInput: UserInput) extends DbQueryImp {</b>
+<b class="nc">&nbsp;  override val logger: Logger = LoggerFactory.getLogger(getClass)</b>
+&nbsp;
+&nbsp;  def menu(): Unit = {
+&nbsp;    try {
+&nbsp;      @tailrec
+&nbsp;      def loop(): Unit = {
+<b class="nc">&nbsp;        logger.info(&quot;Choose an operation:&quot;)</b>
+<b class="nc">&nbsp;        logger.info(&quot;1. Insert employee&quot;)</b>
+<b class="nc">&nbsp;        logger.info(&quot;2. Update employee&quot;)</b>
+<b class="nc">&nbsp;        logger.info(&quot;3. Delete employee&quot;)</b>
+<b class="nc">&nbsp;        logger.info(&quot;4. Get employee by ID&quot;)</b>
+<b class="nc">&nbsp;        logger.info(&quot;5. Get all employees&quot;)</b>
+<b class="nc">&nbsp;        logger.info(&quot;6. Exit&quot;)</b>
+<b class="nc">&nbsp;        logger.info(&quot;Enter your choice:&quot;)</b>
+&nbsp;
+<b class="nc">&nbsp;        userInput.readLine(&quot;&quot;).toInt match {</b>
+<b class="nc">&nbsp;          case 1 =&gt; insertEmployee()</b>
+<b class="nc">&nbsp;          case 2 =&gt; updateById()</b>
+<b class="nc">&nbsp;          case 3 =&gt; deleteById()</b>
+<b class="nc">&nbsp;          case 4 =&gt; getById()</b>
+&nbsp;          case 5 =&gt;  {
+<b class="nc">&nbsp;            val employees = getAll</b>
+<b class="nc">&nbsp;            employees</b>
+&nbsp;          }
+&nbsp;          case 6 =&gt; return
+<b class="nc">&nbsp;          case _ =&gt; logger.info(&quot;Invalid choice. Please try again.&quot;)</b>
+&nbsp;        }
+&nbsp;        loop()
+&nbsp;      }
+&nbsp;
+<b class="nc">&nbsp;      loop()</b>
+&nbsp;    } catch {
+&nbsp;      case e: Exception =&gt;
+<b class="nc">&nbsp;        logger.error(s&quot;An error occurred during CRUD operations: ${e.getMessage}&quot;)</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;  def insertEmployee(): Unit = {
+<b class="nc">&nbsp;    val id = userInput.readLine(&quot;Enter employee ID:&quot;).toInt</b>
+<b class="nc">&nbsp;    val name = userInput.readLine(&quot;Enter employee name:&quot;)</b>
+<b class="nc">&nbsp;    val age = userInput.readLine(&quot;Enter employee age:&quot;).toInt</b>
+<b class="nc">&nbsp;    val department = userInput.readLine(&quot;Enter employee department:&quot;)</b>
+<b class="nc">&nbsp;    val city = userInput.readLine(&quot;Enter employee city:&quot;)</b>
+<b class="nc">&nbsp;    val state = userInput.readLine(&quot;Enter employee state:&quot;)</b>
+<b class="nc">&nbsp;    val timestamp = userInput.readLine(&quot;inserted time:&quot;)</b>
+&nbsp;
+<b class="nc">&nbsp;    val employee = Employee(id, name, age, department, city, state, timestamp)</b>
+<b class="nc">&nbsp;    val result = insertEmployeeData(connection, employee)</b>
+<b class="nc">&nbsp;    logger.info(result)</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  def updateById(): Unit = {
+<b class="nc">&nbsp;    val id = userInput.readLine(&quot;Enter employee ID:&quot;).toInt</b>
+<b class="nc">&nbsp;    val name = userInput.readLine(&quot;Enter employee name:&quot;)</b>
+<b class="nc">&nbsp;    val age = userInput.readLine(&quot;Enter employee age:&quot;).toInt</b>
+<b class="nc">&nbsp;    val department = userInput.readLine(&quot;Enter employee department:&quot;)</b>
+<b class="nc">&nbsp;    val city = userInput.readLine(&quot;Enter employee city:&quot;)</b>
+<b class="nc">&nbsp;    val state = userInput.readLine(&quot;Enter employee state:&quot;)</b>
+<b class="nc">&nbsp;    val timestamp = userInput.readLine(&quot;inserted time:&quot;)</b>
+&nbsp;
+<b class="nc">&nbsp;    val employee = Employee(id, name, age, department, city, state, timestamp)</b>
+<b class="nc">&nbsp;    val result = updateById(connection, id, employee)</b>
+<b class="nc">&nbsp;    logger.info(result)</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  def deleteById(): Unit = {
+<b class="nc">&nbsp;    val id = userInput.readLine(&quot;Enter employee ID to delete:&quot;).toInt</b>
+&nbsp;
+<b class="nc">&nbsp;    val result = deleteById(connection, id)</b>
+<b class="nc">&nbsp;    logger.info(result)</b>
+&nbsp;  }
+&nbsp;
+&nbsp;  def getById(): Unit = {
+<b class="nc">&nbsp;    val id = userInput.readLine(&quot;Enter employee ID to retrieve:&quot;).toInt</b>
+<b class="nc">&nbsp;    val employee = getById(connection, id)</b>
+<b class="nc">&nbsp;    employee match {</b>
+<b class="nc">&nbsp;      case Some(emp) =&gt; logger.info(s&quot;Employee details: $emp&quot;)</b>
+<b class="nc">&nbsp;      case None =&gt; logger.info(s&quot;No employee found with ID $id&quot;)</b>
+&nbsp;    }
+&nbsp;  }
+&nbsp;
+&nbsp;   def getAll(): List[Employee] = {
+<b class="nc">&nbsp;    val employees = super.getAll(connection)</b>
+<b class="nc">&nbsp;    employees.foreach(employee =&gt; logger.info(s&quot;Employee details: $employee&quot;))</b>
+<b class="nc">&nbsp;    employees</b>
+&nbsp;  }
+&nbsp;}
 </code>
 </pre>
 </div>
@@ -181,7 +218,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-07-26 09:47</div>
+    <div style="float:right;">generated on 2024-08-13 11:06</div>
 </div>
 </body>
 </html>

@@ -48,7 +48,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/5)
+    (0/3)
   </span>
 </td>
 <td class="coverageStat">
@@ -64,34 +64,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/14)
-  </span>
-</td>
-  </tr>
-  <tr>
-    <td class="name">MainApplication$delayedInit$body</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/1)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/2)
-  </span>
-</td>
-<td class="coverageStat">
-  <span class="percent">
-    0%
-  </span>
-  <span class="absValue">
-    (0/1)
+    (0/21)
   </span>
 </td>
   </tr>
@@ -102,7 +75,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/6)
+    (0/3)
   </span>
 </td>
 <td class="coverageStat">
@@ -110,7 +83,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/6)
+    (0/4)
   </span>
 </td>
 <td class="coverageStat">
@@ -118,7 +91,7 @@ Current scope:     <a href="../../index.html">all classes</a>
     0%
   </span>
   <span class="absValue">
-    (0/15)
+    (0/21)
   </span>
 </td>
 </tr>
@@ -129,34 +102,89 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 
 <pre>
-<code class="sourceCode" id="sourceCode">&nbsp;package main
+<code class="sourceCode" id="sourceCode">&nbsp;//package main
+&nbsp;//
+&nbsp;//import org.slf4j.{Logger, LoggerFactory}
+&nbsp;//import repository.DatabaseConnection
+&nbsp;//import services.{CrudOperations, ExtractDatabase, GenerateEmployeeXml}
+&nbsp;//
+&nbsp;//import java.sql.Connection
+&nbsp;//import scala.util.{Failure, Success, Try}
+&nbsp;//
+&nbsp;//object MainApplication extends App {
+&nbsp;//  val logger: Logger = LoggerFactory.getLogger(getClass)
+&nbsp;//  val databaseConnection = new DatabaseConnection
+&nbsp;//
+&nbsp;//  val connection: Try[Connection] = Try {
+&nbsp;//    databaseConnection.getConnection
+&nbsp;//  }
+&nbsp;//
+&nbsp;//  connection match {
+&nbsp;//    case Success(connection) =&gt;
+&nbsp;//      logger.info(&quot;connection has been successfully established!&quot;)
+&nbsp;//
+&nbsp;//      val generateEmployeeXml = new GenerateEmployeeXml
+&nbsp;//      generateEmployeeXml.insertDataIntoDataBase(connection)
+&nbsp;//
+&nbsp;//      new CrudOperations(connection).menu()
+&nbsp;//
+&nbsp;//      val outputFilePath = &quot;extracted_employees.xml&quot;
+&nbsp;//      val extractDatabase = new ExtractDatabase
+&nbsp;//      extractDatabase.extractData(connection,outputFilePath)
+&nbsp;//
+&nbsp;////      databaseConnection.closeConnection(connection)
+&nbsp;//    case Failure(exception) =&gt;
+&nbsp;//      logger.error(s&quot;connection disrupted! ${exception.getMessage}&quot;)
+&nbsp;//  }
+&nbsp;//}
+&nbsp;
+&nbsp;
+&nbsp;package main
 &nbsp;
 &nbsp;import org.slf4j.{Logger, LoggerFactory}
 &nbsp;import repository.DatabaseConnection
-&nbsp;import services.{CrudOperations, ExtractDatabase, GenerateEmployeeXml}
+&nbsp;import services.{ConsoleUserInput, CrudOperations, ExtractDatabase, GenerateEmployeeXml}
 &nbsp;
 &nbsp;import java.sql.Connection
 &nbsp;import scala.util.{Failure, Success, Try}
 &nbsp;
-<b class="nc">&nbsp;object MainApplication extends App {</b>
-<b class="nc">&nbsp;  val logger: Logger = LoggerFactory.getLogger(getClass)</b>
-<b class="nc">&nbsp;  val connection: Try[Connection] = Try {</b>
-<b class="nc">&nbsp;    DatabaseConnection.getConnection</b>
+&nbsp;object MainApplication {
+&nbsp;  def main(args: Array[String]): Unit = {
+<b class="nc">&nbsp;    val logger: Logger = LoggerFactory.getLogger(getClass)</b>
+<b class="nc">&nbsp;    val userInput = new ConsoleUserInput</b>
+&nbsp;    //    val databaseConnection = new DatabaseConnection
+<b class="nc">&nbsp;    run(</b>
+<b class="nc">&nbsp;      new DatabaseConnection,</b>
+<b class="nc">&nbsp;      new GenerateEmployeeXml,</b>
+<b class="nc">&nbsp;      (conn:Connection) =&gt;new CrudOperations(conn,userInput),</b>
+<b class="nc">&nbsp;      new ExtractDatabase( new DatabaseConnection,logger),</b>
+<b class="nc">&nbsp;      logger</b>
+&nbsp;    )
 &nbsp;  }
-&nbsp;
-<b class="nc">&nbsp;  connection match {</b>
-<b class="nc">&nbsp;    case Success(connection) =&gt;</b>
-<b class="nc">&nbsp;      logger.info(&quot;connection has been successfully established!&quot;)</b>
-<b class="nc">&nbsp;      val generateEmployeeXml = new GenerateEmployeeXml</b>
-<b class="nc">&nbsp;      generateEmployeeXml.insertDataIntoDataBase(connection)</b>
-<b class="nc">&nbsp;      new CrudOperations(connection).menu()</b>
-<b class="nc">&nbsp;      val outputFilePath =&quot;extracted_employees.xml&quot;</b>
-<b class="nc">&nbsp;      ExtractDatabase.extractData(connection,outputFilePath)</b>
-<b class="nc">&nbsp;    case Failure(exception) =&gt;</b>
-<b class="nc">&nbsp;      logger.error(s&quot;connection disrupted! ${exception.getMessage}&quot;)</b>
+&nbsp;  def run(
+&nbsp;           databaseConnection: DatabaseConnection,
+&nbsp;           generateEmployeeXml: GenerateEmployeeXml,
+&nbsp;           crudOperationsFactory: Connection =&gt; CrudOperations,
+&nbsp;           extractDatabase: ExtractDatabase,
+&nbsp;           logger: Logger
+&nbsp;         ): Unit = {
+<b class="nc">&nbsp;    val connection: Try[Connection] = Try {</b>
+<b class="nc">&nbsp;      databaseConnection.getConnection</b>
+&nbsp;    }
+<b class="nc">&nbsp;    connection match {</b>
+<b class="nc">&nbsp;      case Success(conn) =&gt;</b>
+<b class="nc">&nbsp;        logger.info(&quot;connection has been successfully established!&quot;)</b>
+<b class="nc">&nbsp;        generateEmployeeXml.insertDataIntoDataBase(conn)</b>
+<b class="nc">&nbsp;        crudOperationsFactory(conn).menu()</b>
+<b class="nc">&nbsp;        val outputFilePath = &quot;extracted_employees.xml&quot;</b>
+<b class="nc">&nbsp;        extractDatabase.extractData(conn, outputFilePath)</b>
+<b class="nc">&nbsp;        databaseConnection.closeConnection(conn)</b>
+<b class="nc">&nbsp;      case Failure(exception) =&gt;</b>
+<b class="nc">&nbsp;        logger.error(s&quot;connection disrupted! ${exception.getMessage}&quot;)</b>
+&nbsp;    }
 &nbsp;  }
 &nbsp;}
-&nbsp;
+<b class="nc">&nbsp;</b>
 </code>
 </pre>
 </div>
@@ -180,7 +208,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2024-07-26 09:47</div>
+    <div style="float:right;">generated on 2024-08-13 11:06</div>
 </div>
 </body>
 </html>
